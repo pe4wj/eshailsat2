@@ -168,5 +168,5 @@ def generate_wav(modulated_in):
 
 
 #generate the actual beacon wav file
-beacon = 'vvv de PE4WJ   '
+beacon = 'vvv de NOCALL   '
 generate_wav(modulate(generatecw(beacon)))
