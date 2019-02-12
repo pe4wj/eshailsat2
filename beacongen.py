@@ -25,19 +25,19 @@ morse = {'A': '.-',     'B': '-...',   'C': '-.-.',
         '0': '-----',  '1': '.----',  '2': '..---',
         '3': '...--',  '4': '....-',  '5': '.....',
         '6': '-....',  '7': '--...',  '8': '---..',
-        '9': '----.' 
+        '9': '----.',  '*': '*'
         }
 
 #INPUT PARAMETERS
 
 #audio sample rate
-samplerate = 48000 #samples/s
+samplerate = 44100 #samples/s
 
 #CW tone frequency
 frequency = 600 #Hz
 
 #morse speed in words per minute
-wpm = 20
+wpm = 16
 
 
 #raised cosine in time rampup / rampdown
@@ -65,15 +65,17 @@ def generatecw(str_in):
     
     #morse code timing definition
     time_unit = 1
-    dot_duration = time_unit
+    dot_duration = 1*time_unit
     dash_duration = 3*time_unit
     interdotdashspacing = 1*time_unit
     intercharacterspacing = 3*time_unit
     interwordspacing = 7*time_unit
+    tone_duration = 60*time_unit
     
     rampduration = int(time_unit*oversampling*rampfraction)
     dotconstantduration = dot_duration*oversampling - 2*rampduration
     dashconstantduration = dash_duration*oversampling - 2*rampduration
+    toneconstantduration = tone_duration*oversampling - 2*rampduration
     
     for char in str_in:
         if char == ' ':
@@ -94,7 +96,8 @@ def generatecw(str_in):
                     #rampdown
                     for i in range(0,rampduration):
                         cwarray.append(ramp(i,rampduration,False))
-                else:
+                    
+                elif dotdash == '-':
                     #dash
                     #rampup
                     for i in range(0,rampduration):
@@ -105,9 +108,23 @@ def generatecw(str_in):
                     #rampdown
                     for i in range(0,rampduration):
                         cwarray.append(ramp(i,rampduration,False))
+
+                elif dotdash == '*': #special case for continuous tone (microwave beacon-like)
+                    #dash
+                    #rampup
+                    for i in range(0,rampduration):
+                        cwarray.append(ramp(i,rampduration,True))
+                    #constant level
+                    for i in range(0,toneconstantduration):
+                        cwarray.append(1)
+                    #rampdown
+                    for i in range(0,rampduration):
+                        cwarray.append(ramp(i,rampduration,False))
+                        
                 #inter dot-dash spacing
                 for i in range(0,interdotdashspacing*oversampling):
                     cwarray.append(0)
+                    
             #inter character spacing
         for i in range(0,intercharacterspacing*oversampling):
             cwarray.append(0)
@@ -168,5 +185,5 @@ def generate_wav(modulated_in):
 
 
 #generate the actual beacon wav file
-beacon = 'vvv de NOCALL   '
+beacon = 'NOCALL JO99 *  '
 generate_wav(modulate(generatecw(beacon)))
