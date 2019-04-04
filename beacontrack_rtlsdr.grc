@@ -810,7 +810,7 @@
     </param>
     <param>
       <key>const</key>
-      <value>0.01</value>
+      <value>0.100</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1132,7 +1132,7 @@
     </param>
     <param>
       <key>taps</key>
-      <value>1024</value>
+      <value>128</value>
     </param>
     <param>
       <key>type</key>
