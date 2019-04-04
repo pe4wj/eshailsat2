@@ -720,7 +720,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>/tmp/dupa</value>
+      <value>/tmp/gqrx_fifo</value>
     </param>
     <param>
       <key>_coordinate</key>
